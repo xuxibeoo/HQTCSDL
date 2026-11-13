@@ -1,0 +1,206 @@
+{
+  "project": "HQTCSDL",
+  "date": "2026-11-13",
+  "scope": "Canonical SQL review; approved package-body replacement only; regression DML rolled back",
+  "no_schema_reset": true,
+  "no_performance_seed_loaded": true,
+  "no_business_data_commit_in_regressions": true,
+  "precheck_counts": {
+    "tickets": 400305,
+    "orders": 300057,
+    "historical_2023_tickets": 400000
+  },
+  "live_metadata": {
+    "checked_at": "2026-11-13T13:12:06.864558+00:00",
+    "oracle_version": "23.9.0.25.7",
+    "schema": "CINEMA",
+    "table_count": 16,
+    "ticket_count": 400305,
+    "order_count": 300057,
+    "historical_2023_ticket_count": 400000,
+    "performance_seed_marker_count": 1,
+    "compile_error_count": 0,
+    "invalid_object_count": 0,
+    "public_package_member_count": 8,
+    "valid_trigger_count": 3,
+    "valid_view_count": 2,
+    "scheduler": "TRUE|FREQ=MINUTELY;INTERVAL=1",
+    "scan_window_constant": "  c_phut_soat_som constant pls_integer := 30;\n"
+  },
+  "source_sha256": [
+    {
+      "Path": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL\\sql\\02_pkg_dat_ve.sql",
+      "Hash": "16F5D853AE4860B2D45C4167E98BC0100B4BD6D28DA4C8B81CBE7FBB8139F632"
+    },
+    {
+      "Path": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL\\tools\\verify-sql-audit.py",
+      "Hash": "8DE76F3893C72109C66A09387D0D97B5B2A5CC99AD56C2EFF4C0A1D926471EE9"
+    }
+  ],
+  "fix": {
+    "file": "sql/02_pkg_dat_ve.sql",
+    "routine": "PKG_DAT_VE.TINH_GIAM",
+    "problem": "Date-only expiry date was compared to current time; coupons expired at 00:00 of their final advertised day.",
+    "before_probe": {
+      "now": "2026-11-13 20:06:39",
+      "end_date": "2026-11-13 00:00:00",
+      "actual_error": "ORA-20026"
+    },
+    "change": "Compare TRUNC(local now) against TRUNC(start/end); final calendar day remains inclusive.",
+    "runtime_deployment": "CREATE OR REPLACE PACKAGE BODY only; existing schema/data/volume unchanged"
+  },
+  "regression_suite": {
+    "mode": "rollback_only",
+    "passed": 17,
+    "total": 17,
+    "results": [
+      {
+        "case": "TC-01",
+        "passed": true,
+        "detail": "Hai ghế VIP giữ 10 phút; 100.000 × 1,2 + 20.000 = 140.000 đồng/ghế; đủ hai dòng nhật ký."
+      },
+      {
+        "case": "TC-02",
+        "passed": true,
+        "detail": "Lần giữ F5 thứ hai trả ORA-20021, không sinh đơn dở dang."
+      },
+      {
+        "case": "TC-04",
+        "passed": true,
+        "detail": "Mã 10% tạo vé có QR và cộng điểm; lượt khuyến mãi đã dùng bị từ chối với ORA-20026."
+      },
+      {
+        "case": "TC-05",
+        "passed": true,
+        "detail": "Thanh toán quá hạn trả ORA-20023. Thủ tục nhả ghế đổi vé thành HET_HAN, đặt lại được."
+      },
+      {
+        "case": "TC-06",
+        "passed": true,
+        "detail": "Mã giao dịch trùng bị chặn bởi ORA-20027; đơn thứ hai vẫn giữ ghế."
+      },
+      {
+        "case": "TC-07",
+        "passed": true,
+        "detail": "Còn 1 giờ: ORA-20025. Còn hơn 2 giờ: vé hủy và ghi HOAN_TIEN đúng số tiền."
+      },
+      {
+        "case": "TC-08",
+        "passed": true,
+        "detail": "Trùng lịch và nghỉ 10 phút trả ORA-20031; nghỉ 20 phút thành công."
+      },
+      {
+        "case": "TC-09",
+        "passed": true,
+        "detail": "Lần đầu HOP_LE, lần hai DA_SU_DUNG, chuyển lùi về GIU_CHO trả ORA-20032."
+      },
+      {
+        "case": "VOUCHER_EXPIRED_YESTERDAY",
+        "passed": true,
+        "detail": {
+          "start_day_offset": -2,
+          "end_day_offset": -1,
+          "oracle_code": 20026
+        }
+      },
+      {
+        "case": "VOUCHER_EXPIRES_TODAY",
+        "passed": true,
+        "detail": {
+          "start_day_offset": -1,
+          "end_day_offset": 0,
+          "discount": 1000
+        }
+      },
+      {
+        "case": "VOUCHER_TODAY_ONLY",
+        "passed": true,
+        "detail": {
+          "start_day_offset": 0,
+          "end_day_offset": 0,
+          "discount": 1000
+        }
+      },
+      {
+        "case": "VOUCHER_STARTS_TOMORROW",
+        "passed": true,
+        "detail": {
+          "start_day_offset": 1,
+          "end_day_offset": 2,
+          "oracle_code": 20026
+        }
+      },
+      {
+        "case": "VOUCHER_EXPIRES_TOMORROW",
+        "passed": true,
+        "detail": {
+          "start_day_offset": -1,
+          "end_day_offset": 1,
+          "discount": 1000
+        }
+      },
+      {
+        "case": "CUMULATIVE_REFUND_AND_POINTS",
+        "passed": true,
+        "detail": {
+          "paid": 264999,
+          "refunds": [
+            100000,
+            99999
+          ],
+          "retained_combo": 65000,
+          "points_retained": 6
+        }
+      },
+      {
+        "case": "SCHEDULE_LOCK_ROLLBACK_HANDOFF",
+        "passed": true,
+        "detail": {
+          "kind": "schedule",
+          "B_waited": true,
+          "B_result": "success_after_A_rollback",
+          "commit_used": false
+        }
+      },
+      {
+        "case": "SEAT_UNIQUE_LOCK_ROLLBACK_HANDOFF",
+        "passed": true,
+        "detail": {
+          "kind": "seat",
+          "B_waited": true,
+          "B_result": "success_after_A_rollback",
+          "commit_used": false
+        }
+      },
+      {
+        "case": "TWO_QUERY_PLANS_READONLY",
+        "passed": true,
+        "detail": {
+          "A": {
+            "result_match": true,
+            "bind_id": 25015,
+            "buffer_gets": [
+              4031,
+              4
+            ]
+          },
+          "B": {
+            "result_match": true,
+            "bind_id": 1,
+            "buffer_gets": [
+              2127,
+              12
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "limits": [
+    "TC-03 committed-winner concurrency not executed here; root can execute existing tools/verify.ps1 separately.",
+    "Two new concurrency probes prove blocking and rollback handoff, not two-session committed winner rejection.",
+    "Identity sequence values may advance despite rolled-back Oracle DML.",
+    "Performance seed is optional, not loaded by sql/install.sql on a fresh volume.",
+    "Report/UI must state the current compiled early QR window: 30 minutes, distinct from 15-minute cleaning gap."
+  ]
+}

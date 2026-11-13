@@ -4,6 +4,8 @@
 
 ## 1. Cách đọc trạng thái
 
+**Bản rà soát ngày 13/11/2026:** báo cáo Word và hướng dẫn vấn đáp đã được bổ sung trong `bao-cao/`, đối chiếu lại với source và bản khởi động sạch. Xem [kết luận và phần còn cần chuẩn bị](REVIEW_BAO_CAO_20261113.md).
+
 **Cập nhật sau kiểm tra ngày 12/11/2026:** đã chạy lại ứng dụng với Oracle 23.9, 9/9 ca, API contract, schema, Edge và hai plan A/B sau bản sửa bố cục; ngày 11/11 đã xác nhận tắt/mở giữ dữ liệu. Xem [kết quả mới và giới hạn đã xác nhận](qa-student/KET_QUA_BAN_HOC_TAP.md). Các nhận xét “cần chạy lại” bên dưới là checklist cần lặp trước buổi bảo vệ, không phủ nhận lần kiểm tra mới này.
 
 - **Có trong mã nguồn:** đã đọc thấy phần cài đặt tương ứng trong thư mục này.
@@ -43,7 +45,7 @@ Nguồn SQL thống nhất là `sql/`. Các tên tệp trong `database/` đượ
 | Cài đặt kỹ thuật trọng tâm |20| Package, compound trigger, trigger trạng thái/audit; CTE, Window Function, CONNECT BY; xử lý tranh chấp ghế | Đối chiếu đúng tên đề tài đã đăng ký; chỉ rõ tình huống khó cần công nghệ trọng tâm. Không tự thêm JSON/Graph/Vector nếu không thuộc đề tài. |
 | Chất lượng code và tối ưu |10| SQL tách tệp, bind parameter, exception, giao dịch;2 phép đo plan | Lưu kết quả mới cho cả A/B; giải thích operation, buffer gets, đánh đổi chi phí ghi khi thêm index. |
 | Ứng dụng giao diện + API + DB |15| React/FastAPI/Oracle; đặt vé, thanh toán demo, QR, hoàn, báo cáo, phòng lab | Demo thành công từ web đến dữ liệu Oracle. Phải nói rõ thanh toán chỉ là mô phỏng, không kết nối ngân hàng/cổng thanh toán thật. |
-| Báo cáo đồ án |10| Có tài liệu kỹ thuật, hướng dẫn bảo vệ, kết quả và ảnh | Chưa tìm thấy báo cáo Word/PDF hoàn chỉnh trong HQTCSDL khi kiểm kê. Nhóm soạn theo cấu trúc giảng viên, thêm trích dẫn, ERD và hình/log mới. Hai tệp hướng dẫn không tự trở thành báo cáo đã nộp. |
+| Báo cáo đồ án |10| Có bản Word v3 trong `bao-cao/`, hình giữ từ v2 và số liệu đã kiểm chứng | Nhóm đọc lại bản v3, đối chiếu thêm Mục 4 đầy đủ nếu giảng viên có yêu cầu khác; xác nhận phân công cá nhân. Không tự nhận đủ điểm chỉ vì có báo cáo. |
 | Slide và trình bày |10| Có kịch bản tại `KICH_BAN_BAO_CAO.md` | Chưa thấy PPTX/PDF slide trong HQTCSDL. Nhóm dựng khoảng 8 slide, tập trình bày 8-10 phút. |
 | Vấn đáp |20| Có câu hỏi gợi ý và vị trí mã để giải thích | Chưa thể xác nhận năng lực bằng công cụ. Mỗi thành viên phải tự chạy, giải thích và sửa được phần mình phụ trách. |
 

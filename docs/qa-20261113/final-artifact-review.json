@@ -1,0 +1,61 @@
+{
+  "reviewCompletedOn": "2026-11-14",
+  "sourcePreserved": true,
+  "sourceSha256": "78e79f9554c7a2dfe09593fd44dbc3d0f0ddafb1f21d23e01f9424d42a9e26dc",
+  "report": {
+    "path": "bao-cao\\Nhom5_BaoCao_HoanChinh_v3.docx",
+    "sha256": "da81b7ad61000e62900b3ff771975cf526ce54a9c9e0b0a01e20dd62fe1d1657",
+    "pages": 77,
+    "drawings": 30,
+    "tables": 20,
+    "sections": 6,
+    "all28MediaIdentical": true,
+    "stylesXmlIdentical": true,
+    "numberingXmlIdentical": true,
+    "canonicalSqlTextMatches": {
+      "package_spec": true,
+      "package_body": true,
+      "01_schema.sql": true,
+      "03_triggers.sql": true,
+      "04_job_views_grants.sql": true,
+      "06_seed_perf.sql": true
+    },
+    "allPagesVisuallyReviewed": true,
+    "changedPagesRerenderedAndRechecked": [
+      3,
+      5,
+      6,
+      31,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      69
+    ]
+  },
+  "guide": {
+    "path": "bao-cao\\Huong_Dan_Van_Dap_HQTCSDL.docx",
+    "sha256": "1b4679c03ea456e4b56fc8ef30bf6df1bc38bae7198fb7c473b53f43a4738918",
+    "pages": 12,
+    "allPagesVisuallyReviewed": true
+  },
+  "renderMethod": "Packaged renderer diagnosed absent LibreOffice; native Microsoft Word refreshed fields/exported PDFs; bundled Poppler rendered PNGs.",
+  "latestRuntimeChecks": {
+    "date": "2026-11-14",
+    "oracleCasesPassed": 9,
+    "oracleCasesTotal": 9,
+    "apiContractPassed": true,
+    "sessionAndSqlModalBrowserPassed": true,
+    "readOnlyDBeaverReviewSqlStatements": 20,
+    "allReviewSqlExecutable": true,
+    "launcherConfigurationPassedWindowsPowerShell51": true
+  },
+  "notes": [
+    "Word v2 was never overwritten.",
+    "PDF/PNG QA files remain in ignored .runtime only.",
+    "400000 is the verified historical performance dataset, not the number of executed UI tests."
+  ]
+}

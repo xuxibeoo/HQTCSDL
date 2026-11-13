@@ -17,11 +17,11 @@ export function OracleLab({ session }) {
 
   // TC-01 to TC-09
   const testNames = [
-    "TC-01: Giữ ghế 10 phút & Thanh toán (Sinh QR)",
-    "TC-02: Phụ thu ghế VIP & Giá vé cuối tuần (+16%)",
+    "TC-01: Giữ ghế 10 phút, giá VIP cuối tuần (+20% giá cơ bản) & audit",
+    "TC-02: Giữ trùng ghế F5 bị chặn, không ghi đơn dở dang (ORA-20021)",
     "TC-03: Hai phiên tranh chấp cùng 1 ghế F5 (ORA-20021)",
-    "TC-04: Đơn hết hạn & Giải phóng ghế (ORA-20023 / HET_HAN)",
-    "TC-05: Voucher giới hạn 1 lượt thanh toán (ORA-20026)",
+    "TC-04: Voucher 10%, thanh toán sinh QR / tích điểm & hết lượt (ORA-20026)",
+    "TC-05: Quá hạn thanh toán, giải phóng ghế & đặt lại (ORA-20023 / HET_HAN)",
     "TC-06: Chống trùng mã giao dịch ngoài (ORA-20027)",
     "TC-07: Hủy vé trước 2 giờ & Từ chối < 2 giờ (ORA-20025)",
     "TC-08: Trigger kiểm soát lịch chiếu & thời gian dọn phòng (ORA-20031)",

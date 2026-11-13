@@ -54,10 +54,11 @@ create or replace package body pkg_dat_ve as
   end;
 
   function tinh_giam(p_km khuyen_mai%rowtype,p_tong_tien number) return number is
-    v_ngay date := cast(gio_hien_tai as date);
+    -- Promotion inputs are calendar dates; the final date remains valid all day.
+    v_ngay date := trunc(cast(gio_hien_tai as date));
     v_giam number;
   begin
-    if v_ngay<p_km.ngay_bat_dau or v_ngay>p_km.ngay_ket_thuc
+    if v_ngay<trunc(p_km.ngay_bat_dau) or v_ngay>trunc(p_km.ngay_ket_thuc)
       or p_km.so_luot_da_dung>=p_km.so_luot_toi_da then
       raise_application_error(c_err_khuyen_mai,'Mã khuyến mãi hết hạn hoặc hết lượt dùng.');
     end if;

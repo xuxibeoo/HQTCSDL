@@ -15,19 +15,6 @@ $runtimePath = Join-Path $projectRoot '.runtime'
 $startedAt = Get-Date
 
 function Say([string]$Message) { Write-Host $Message -ForegroundColor Cyan }
-function Get-Setting([string]$Name, [string]$Fallback) {
-    $value = [Environment]::GetEnvironmentVariable($Name, 'Process')
-    if ($value) { return $value }
-    $envPath = Join-Path $projectRoot '.env'
-    if (Test-Path -LiteralPath $envPath) {
-        foreach ($line in (Get-Content -LiteralPath $envPath)) {
-            if ($line -match ('^\s*' + [regex]::Escape($Name) + '\s*=\s*(.*?)\s*$')) {
-                return $Matches[1].Trim().Trim('"').Trim("'")
-            }
-        }
-    }
-    return $Fallback
-}
 function Test-DockerReady {
     $savedPreference = $ErrorActionPreference
     try {
@@ -83,14 +70,18 @@ try {
     Ensure-Docker
     & docker compose version *> $null
     if ($LASTEXITCODE -ne 0) { throw 'Can Docker Compose v2. Hay cap nhat Docker Desktop.' }
-    & docker @composeArgs config --quiet
+    # Let Compose interpret .env quoting, comments, interpolation and overrides.
+    # Keep the full resolved configuration in memory only; it includes passwords.
+    $configText = & docker @composeArgs config --format json
     if ($LASTEXITCODE -ne 0) { throw 'compose.yaml hoac .env chua hop le. Khong thay doi mat khau cua volume da khoi tao.' }
+    $resolved = ($configText -join [Environment]::NewLine) | ConvertFrom-Json
     if ($Action -eq 'Check') { Say 'Kiem tra cau hinh DAT. Chua tao/xoa/reset co so du lieu.'; exit 0 }
 
     New-Item -ItemType Directory -Path $runtimePath -Force | Out-Null
-    $webPort = Get-Setting 'WEB_PORT' '8080'
-    $oraclePort = Get-Setting 'ORACLE_PORT' '1521'
+    $webPort = [string]($resolved.services.web.ports | Where-Object { $_.target -eq 8080 } | Select-Object -First 1).published
+    $oraclePort = [string]($resolved.services.oracle.ports | Where-Object { $_.target -eq 1521 } | Select-Object -First 1).published
     if ($webPort -notmatch '^\d+$' -or [int]$webPort -lt 1 -or [int]$webPort -gt 65535) { throw 'WEB_PORT phai la cong tu 1 den 65535.' }
+    if ($oraclePort -notmatch '^\d+$' -or [int]$oraclePort -lt 1 -or [int]$oraclePort -gt 65535) { throw 'ORACLE_PORT phai la cong tu 1 den 65535.' }
     $webUrl = 'http://127.0.0.1:' + $webPort
     $logPath = Join-Path $runtimePath 'startup.log'
     $errorPath = Join-Path $runtimePath 'startup-errors.log'

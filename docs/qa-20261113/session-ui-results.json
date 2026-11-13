@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-11-13T17:45:29.594Z",
+  "baseUrl": "http://127.0.0.1:8080",
+  "browserChannel": "msedge",
+  "passed": true,
+  "auth": {
+    "anonymousStatus": 401,
+    "validStatus": 200,
+    "invalidStatus": 401,
+    "publicUserKeys": [
+      "id",
+      "email",
+      "ho_ten",
+      "role",
+      "ma_rap",
+      "hang_thanh_vien",
+      "diem_tich_luy"
+    ],
+    "noTokenOrHash": true
+  },
+  "browser": [
+    {
+      "scenario": "valid",
+      "role": "CUSTOMER_2",
+      "trustedNameRestored": true,
+      "stillInvalid": false,
+      "calls": [
+        {
+          "path": "/api/auth/me",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "scenario": "stale",
+      "role": "CUSTOMER_1",
+      "trustedNameRestored": true,
+      "stillInvalid": false,
+      "calls": [
+        {
+          "path": "/api/auth/me",
+          "status": 401
+        },
+        {
+          "path": "/api/auth/demo/CUSTOMER_1",
+          "status": 200
+        },
+        {
+          "path": "/api/auth/me",
+          "status": 200
+        }
+      ]
+    }
+  ],
+  "sql": [
+    {
+      "report": "report_top_phim",
+      "exactIgnoringWhitespace": true
+    },
+    {
+      "report": "report_doanh_thu_thang",
+      "exactIgnoringWhitespace": true
+    },
+    {
+      "report": "report_doanh_thu_ngay",
+      "exactIgnoringWhitespace": true
+    },
+    {
+      "report": "report_lap_day_phong",
+      "exactIgnoringWhitespace": true
+    }
+  ],
+  "pageErrors": [],
+  "businessPosts": 0,
+  "labLabels": [
+    "TC-01: Giữ ghế 10 phút, giá VIP cuối tuần (+20% giá cơ bản) & audit",
+    "TC-02: Giữ trùng ghế F5 bị chặn, không ghi đơn dở dang (ORA-20021)",
+    "TC-03: Hai phiên tranh chấp cùng 1 ghế F5 (ORA-20021)",
+    "TC-04: Voucher 10%, thanh toán sinh QR / tích điểm & hết lượt (ORA-20026)",
+    "TC-05: Quá hạn thanh toán, giải phóng ghế & đặt lại (ORA-20023 / HET_HAN)",
+    "TC-06: Chống trùng mã giao dịch ngoài (ORA-20027)",
+    "TC-07: Hủy vé trước 2 giờ & Từ chối < 2 giờ (ORA-20025)",
+    "TC-08: Trigger kiểm soát lịch chiếu & thời gian dọn phòng (ORA-20031)",
+    "TC-09: Quét QR 2 lần & chặn chuyển lùi trạng thái vé (ORA-20032)"
+  ]
+}

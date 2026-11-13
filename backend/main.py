@@ -169,6 +169,11 @@ def login(form: Login):
             raise HTTPException(401, "Email hoặc mật khẩu không đúng.")
         return session(account)
 
+@app.get("/api/auth/me")
+def auth_me(actor=Depends(current)):
+    fields = ("id", "email", "ho_ten", "role", "ma_rap", "hang_thanh_vien", "diem_tich_luy")
+    return {"user": {key: actor[key] for key in fields if key in actor}}
+
 @app.post("/api/auth/demo/{role}")
 def demo_login(role: str):
     if not db.DEMO:

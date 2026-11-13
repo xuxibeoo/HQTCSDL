@@ -76,6 +76,7 @@ function App() {
   const [customers, setCustomers] = useState([]);
   const [demoRole, setDemoRole] = useState(() => sessionStorage.getItem("cinema-demo-role") || "");
   const [health, setHealth] = useState(null);
+  const [sessionChecking, setSessionChecking] = useState(true);
   const [error, setError] = useState("");
   
   // 5 Main Navigation Tabs: 'booking' | 'myTickets' | 'scanner' | 'analytics' | 'lab'
@@ -111,13 +112,35 @@ function App() {
     .catch(e => setError(e.clean_message || e.message));
 
   useEffect(() => {
-    api("/health").then(data => {
-      setHealth(data);
-      if (!data.demo) return;
-      refreshCustomers();
-      if (!session) switchDemoSession("CUSTOMER_1");
-    }).catch(e => setError(e.clean_message || e.message));
+    let active = true;
+    async function restoreSession() {
+      let status = null;
+      try {
+        status = await api("/health");
+        if (!active) return;
+        if (status.demo) refreshCustomers();
+        if (session?.token) {
+          try {
+            const identity = await api("/auth/me", session.token);
+            if (active) installSession({ token: session.token, user: identity.user }, demoRole);
+            return;
+          } catch (reason) {
+            if (reason.status !== 401) throw reason;
+            if (!active) return;
+            installSession(null);
+          }
+        } else if (session) installSession(null);
+        // Recover only the demo identity, never replay a booking/payment request.
+        if (active && status.demo) await switchDemoSession("CUSTOMER_1");
+      } catch (reason) {
+        if (active) setError(reason.clean_message || reason.message);
+      } finally {
+        if (active) { setHealth(status); setSessionChecking(false); }
+      }
+    }
+    restoreSession();
     refreshCatalog();
+    return () => { active = false; };
   }, []);
 
   function installSession(data, demo = "") {
@@ -279,6 +302,7 @@ function App() {
                 className="session-select"
                 aria-label="Chuyển tài khoản demo"
                 value={demoRole}
+                disabled={sessionChecking}
                 onChange={e => { if (e.target.value) switchDemoSession(e.target.value); }}
               >
                 <option value="" disabled>Chọn tài khoản demo</option>
@@ -302,6 +326,7 @@ function App() {
                 <button
                   type="button"
                   className="btn-logout"
+                  disabled={sessionChecking}
                   onClick={() => installSession(null)}
                   title="Đăng xuất"
                 >
@@ -312,6 +337,7 @@ function App() {
               <button
                 type="button"
                 className="account-button"
+                disabled={sessionChecking}
                 onClick={() => setLoginModal(true)}
               >
                 <UserRound size={16} /> Đăng nhập

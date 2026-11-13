@@ -1,0 +1,52 @@
+{
+  "A": {
+    "table": "ve",
+    "bind_id": 25015,
+    "plans": [
+      {
+        "sql_id": "105jzxf49h8jg",
+        "child_number": 0,
+        "buffer_gets": 4031,
+        "rows_processed": 60,
+        "elapsed_ms": 0.465,
+        "plan": "SQL_ID  105jzxf49h8jg, child number 0\n-------------------------------------\nselect /*+ GATHER_PLAN_STATISTICS FULL(q) */ /* \nCINEMA_PLAN_2c9355cbaabb4627b8a3fcfcdfb392ed */ ma_ghe,trang_thai from \nve q where ma_suat=:id and trang_thai in \n('GIU_CHO','DA_THANH_TOAN','DA_SU_DUNG')\n \nPlan hash value: 970612404\n \n------------------------------------------------------------------------------------\n| Id  | Operation         | Name | Starts | E-Rows | A-Rows |   A-Time   | Buffers |\n------------------------------------------------------------------------------------\n|   0 | SELECT STATEMENT  |      |      1 |        |     60 |00:00:00.01 |    4031 |\n|*  1 |  TABLE ACCESS FULL| VE   |      1 |     60 |     60 |00:00:00.01 |    4031 |\n------------------------------------------------------------------------------------\n \nPredicate Information (identified by operation id):\n---------------------------------------------------\n \n   1 - filter((\"MA_SUAT\"=:ID AND INTERNAL_FUNCTION(\"TRANG_THAI\")))\n ",
+        "hint": "FULL(q)"
+      },
+      {
+        "sql_id": "1jcjmzwdn25ck",
+        "child_number": 0,
+        "buffer_gets": 4,
+        "rows_processed": 60,
+        "elapsed_ms": 0.072,
+        "plan": "SQL_ID  1jcjmzwdn25ck, child number 0\n-------------------------------------\nselect /*+ GATHER_PLAN_STATISTICS INDEX(q ix_ve_suat_tt_ghe) */ /* \nCINEMA_PLAN_7cb4d1ad69fe4c1bae2694c65391891e */ ma_ghe,trang_thai from \nve q where ma_suat=:id and trang_thai in \n('GIU_CHO','DA_THANH_TOAN','DA_SU_DUNG')\n \nPlan hash value: 2886040777\n \n------------------------------------------------------------------------------------------------\n| Id  | Operation        | Name              | Starts | E-Rows | A-Rows |   A-Time   | Buffers |\n------------------------------------------------------------------------------------------------\n|   0 | SELECT STATEMENT |                   |      1 |        |     60 |00:00:00.01 |       4 |\n|*  1 |  INDEX RANGE SCAN| IX_VE_SUAT_TT_GHE |      1 |     60 |     60 |00:00:00.01 |       4 |\n------------------------------------------------------------------------------------------------\n \nPredicate Information (identified by operation id):\n---------------------------------------------------\n \n   1 - access(\"MA_SUAT\"=:ID)\n       filter((\"TRANG_THAI\"='DA_SU_DUNG' OR \"TRANG_THAI\"='DA_THANH_TOAN' OR \n              \"TRANG_THAI\"='GIU_CHO'))\n ",
+        "hint": "INDEX(q ix_ve_suat_tt_ghe)"
+      }
+    ],
+    "result_match": true
+  },
+  "B": {
+    "table": "don_dat_ve",
+    "bind_id": 1,
+    "plans": [
+      {
+        "sql_id": "381rv924dcnd6",
+        "child_number": 0,
+        "buffer_gets": 2127,
+        "rows_processed": 10,
+        "elapsed_ms": 10.377,
+        "plan": "SQL_ID  381rv924dcnd6, child number 0\n-------------------------------------\nselect /*+ GATHER_PLAN_STATISTICS FULL(q) */ /* \nCINEMA_PLAN_34f1346e3fcc4338bda8db0ff0c7f088 */ \nma_don,thoi_gian_dat,tong_tien,trang_thai from don_dat_ve q where \nma_kh=:id order by thoi_gian_dat desc fetch first 10 rows only\n \nPlan hash value: 3182059736\n \n---------------------------------------------------------------------------------------------------------------------------\n| Id  | Operation               | Name       | Starts | E-Rows | A-Rows |   A-Time   | Buffers |  OMem |  1Mem | Used-Mem |\n---------------------------------------------------------------------------------------------------------------------------\n|   0 | SELECT STATEMENT        |            |      1 |        |     10 |00:00:00.01 |    2127 |       |       |          |\n|*  1 |  COUNT STOPKEY          |            |      1 |        |     10 |00:00:00.01 |    2127 |       |       |          |\n|   2 |   VIEW                  |            |      1 |  15046 |     10 |00:00:00.01 |    2127 |       |       |          |\n|*  3 |    SORT ORDER BY STOPKEY|            |      1 |  15046 |     10 |00:00:00.01 |    2127 |  2048 |  2048 | 2048  (0)|\n|*  4 |     TABLE ACCESS FULL   | DON_DAT_VE |      1 |  15046 |  15053 |00:00:00.01 |    2127 |       |       |          |\n---------------------------------------------------------------------------------------------------------------------------\n \nPredicate Information (identified by operation id):\n---------------------------------------------------\n \n   1 - filter(ROWNUM<=10)\n   3 - filter(ROWNUM<=10)\n   4 - filter(\"MA_KH\"=:ID)\n ",
+        "hint": "FULL(q)"
+      },
+      {
+        "sql_id": "8hjn22atcvzhs",
+        "child_number": 0,
+        "buffer_gets": 12,
+        "rows_processed": 10,
+        "elapsed_ms": 0.096,
+        "plan": "SQL_ID  8hjn22atcvzhs, child number 0\n-------------------------------------\nselect /*+ GATHER_PLAN_STATISTICS INDEX(q ix_don_kh_tg) */ /* \nCINEMA_PLAN_82fcec03256c4158bebefc2dcb204aec */ \nma_don,thoi_gian_dat,tong_tien,trang_thai from don_dat_ve q where \nma_kh=:id order by thoi_gian_dat desc fetch first 10 rows only\n \nPlan hash value: 1265327444\n \n--------------------------------------------------------------------------------------------------------\n| Id  | Operation                     | Name         | Starts | E-Rows | A-Rows |   A-Time   | Buffers |\n--------------------------------------------------------------------------------------------------------\n|   0 | SELECT STATEMENT              |              |      1 |        |     10 |00:00:00.01 |      12 |\n|*  1 |  COUNT STOPKEY                |              |      1 |        |     10 |00:00:00.01 |      12 |\n|   2 |   VIEW                        |              |      1 |     10 |     10 |00:00:00.01 |      12 |\n|   3 |    TABLE ACCESS BY INDEX ROWID| DON_DAT_VE   |      1 |  15046 |     10 |00:00:00.01 |      12 |\n|*  4 |     INDEX RANGE SCAN          | IX_DON_KH_TG |      1 |     10 |     10 |00:00:00.01 |       4 |\n--------------------------------------------------------------------------------------------------------\n \nPredicate Information (identified by operation id):\n---------------------------------------------------\n \n   1 - filter(ROWNUM<=10)\n   4 - access(\"MA_KH\"=:ID)\n ",
+        "hint": "INDEX(q ix_don_kh_tg)"
+      }
+    ],
+    "result_match": true
+  }
+}

@@ -8,6 +8,8 @@
 2. Giữ nguyên toàn bộ thư mục này, bấm đúp **KHOI_DONG.bat**.
 3. Đợi cửa sổ báo sẵn sàng. Trình duyệt mở ứng dụng cùng **Hướng dẫn demo**.
 
+Bạn trong nhóm có thể clone hoặc tải ZIP repository này rồi giải nén toàn bộ và làm ba bước trên. Không cần chép database/volume từ máy người khác. Mặc định lần đầu tạo bộ dữ liệu nhỏ; nếu cần đổi cổng, sao chép `.env.example` thành `.env` trước khi chạy. Không commit `.env` hoặc thông tin đăng nhập thật.
+
 Không cần tự cài Node.js, Python, Oracle hoặc PowerShell 7. Lần đầu có thể mất 5-15 phút để tải image/thư viện; lần sau dùng lại dữ liệu và cache. Không đóng cửa sổ khởi động khi đang chuẩn bị.
 
 - Ứng dụng: http://127.0.0.1:8080/?demo=1
@@ -33,12 +35,17 @@ Các nút hướng dẫn tự mở đúng phân hệ và phiên demo; bạn vẫ
 
 Tài liệu nên mở trước buổi báo cáo:
 
+- [Báo cáo đã rà soát và đồng bộ SQL](bao-cao/Nhom5_BaoCao_HoanChinh_v3.docx).
+- [Hướng dẫn vấn đáp bằng Word](bao-cao/Huong_Dan_Van_Dap_HQTCSDL.docx): DBeaver, review code, demo, kiểm thử và ba vòng câu hỏi.
+- [Bản hướng dẫn có thể đọc ngay trên GitHub](docs/HUONG_DAN_VAN_DAP.md).
+- [Kết quả rà soát ngày 13/11 và trạng thái rubric](docs/REVIEW_BAO_CAO_20261113.md).
+
 - [Kịch bản báo cáo 9 phút, bố cục báo cáo/slide và câu hỏi vấn đáp](docs/KICH_BAN_BAO_CAO.md).
 - [Đối chiếu từng tiêu chí môn học, phần có và phần cần bổ sung](docs/DOI_CHIEU_TIEU_CHI.md).
 - [Giải thích thiết kế và luồng UI - API - Oracle](docs/bao-ve.md).
 - [Kết quả kiểm tra bản học tập](docs/qa-student/KET_QUA_BAN_HOC_TAP.md).
 
-**Báo cáo Word, slide và khả năng giải thích khi vấn đáp không tự hoàn thành chỉ vì ứng dụng chạy.** Bảng đối chiếu nêu rõ các phần này để nhóm chuẩn bị, không tự chấm đạt.
+**Slide và khả năng giải thích khi vấn đáp không tự hoàn thành chỉ vì ứng dụng chạy.** Bản Word đã được rà soát ở thư mục `bao-cao/`; nhóm vẫn phải xác nhận đóng góp cá nhân, tập trình bày và hoàn thiện slide, không tự coi đủ file là chắc chắn đủ điểm.
 
 ## 3. Chỉ học một bộ SQL
 
@@ -78,11 +85,21 @@ Kiểm tra cấu hình mà chưa chạy ứng dụng:
 
 Nếu cần tải lớn (không tự chạy mỗi lần mở app):
 
+Bấm đúp **NAP_DU_LIEU_HIEU_NANG.bat**, đọc cảnh báo và nhập `NAP` để xác nhận. Bộ nạp kiểm tra marker trước, không nạp lại khi đã có. Muốn kiểm tra mà chưa thêm dữ liệu:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\load-performance.ps1 -CheckOnly
+```
+
+Hoặc gọi SQL trực tiếp khi đã hiểu rõ:
+
 ```powershell
 docker compose exec -T oracle bash -lc 'cd /sql && sqlplus -L -s "cinema/$CINEMA_DB_PASSWORD@//localhost:1521/FREEPDB1" @06_seed_perf.sql'
 ```
 
 Script tải lớn có nhận diện đã nạp để không nhân đôi. Giữ cả dữ liệu nghiệp vụ, không xóa 400.000 vé chỉ để mở demo nhanh hơn.
+
+400.000 vé là dữ liệu lịch sử tổng hợp năm 2023 để đo execution plan, không phải 400.000 lượt kiểm thử giao diện hoặc người dùng đồng thời. Chín ca nghiệp vụ được chạy riêng. Báo cáo phim tính giá vé hiệu lực theo ngày chiếu, không đồng nhất với dòng tiền thanh toán trừ hoàn.
 
 ## 5. Khi không mở được
 

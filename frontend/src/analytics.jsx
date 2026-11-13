@@ -25,123 +25,93 @@ ChartJS.register(
   Legend
 );
 
+// Display the same report queries executed by backend/main.py. This clock is
+// backend/db.py's NOW expression, not the database host's SYSDATE timezone.
+const ORACLE_NOW = "cast(systimestamp at time zone 'Asia/Ho_Chi_Minh' as timestamp)";
 const SQL_QUERIES = {
   topPhim: {
     title: "1. Top 3 Phim Doanh Thu Cao Nhất Mỗi Tháng (DENSE_RANK)",
     description: "Sử dụng 2 CTE nối tiếp: CTE thứ nhất tính tổng doanh thu theo tháng và phim; CTE thứ hai áp dụng Window Function DENSE_RANK() phân nhóm theo tháng và xếp hạng giảm dần theo doanh thu.",
-    sql: `WITH dt_phim_thang AS (
-  SELECT TRUNC(s.gio_bat_dau, 'MM') AS thang,
-         p.ma_phim,
-         p.ten_phim,
-         SUM(v.gia_ve) AS doanh_thu
-    FROM ve v
-    JOIN suat_chieu s ON s.ma_suat = v.ma_suat
-    JOIN phim p       ON p.ma_phim = s.ma_phim
-   WHERE v.trang_thai IN ('DA_THANH_TOAN', 'DA_SU_DUNG')
-   GROUP BY TRUNC(s.gio_bat_dau, 'MM'), p.ma_phim, p.ten_phim
-), 
-xep_hang AS (
-  SELECT t.*,
-         DENSE_RANK() OVER (
-           PARTITION BY thang 
-           ORDER BY doanh_thu DESC
-         ) AS hang
-    FROM dt_phim_thang t
-)
-SELECT TO_CHAR(thang, 'YYYY-MM') AS thang,
-       ma_phim,
-       ten_phim,
-       doanh_thu,
-       hang
-  FROM xep_hang 
- WHERE hang <= 3 
- ORDER BY thang DESC, hang;`
+    sql: `with dt_phim_thang as (
+          select trunc(s.gio_bat_dau, 'MM') as thang, p.ma_phim, p.ten_phim, sum(v.gia_ve) as doanh_thu
+          from ve v
+          join suat_chieu s on s.ma_suat = v.ma_suat
+          join phim p on p.ma_phim = s.ma_phim
+          where v.trang_thai in ('DA_THANH_TOAN','DA_SU_DUNG')
+          group by trunc(s.gio_bat_dau, 'MM'), p.ma_phim, p.ten_phim
+        ), xep_hang as (
+          select t.*, dense_rank() over (partition by thang order by doanh_thu desc) as hang
+          from dt_phim_thang t
+        )
+        select to_char(thang, 'YYYY-MM') as thang, ma_phim, ten_phim, doanh_thu, hang
+        from xep_hang where hang <= 3 order by thang desc, hang`
   },
   doanhThuThang: {
     title: "2. Doanh Thu Theo Tháng, Lũy Kế & Tăng Trưởng % (SUM OVER & LAG)",
     description: "Sử dụng CTE gom nhóm doanh thu theo tháng, sau đó áp dụng SUM(...) OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) để tính lũy kế, và LAG(doanh_thu) OVER (ORDER BY thang) để lấy doanh thu tháng liền trước tính tốc độ tăng trưởng %.",
-    sql: `WITH lich_thang AS (
-  SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), LEVEL - 12) AS thang
-    FROM dual CONNECT BY LEVEL <= 12
-), dt_thang AS (
-  SELECT TRUNC(s.gio_bat_dau, 'MM') AS thang,
-         SUM(v.gia_ve) AS doanh_thu
-    FROM ve v 
-    JOIN suat_chieu s ON s.ma_suat = v.ma_suat
-   WHERE v.trang_thai IN ('DA_THANH_TOAN', 'DA_SU_DUNG')
-   GROUP BY TRUNC(s.gio_bat_dau, 'MM')
-), thang_day_du AS (
-  SELECT l.thang, NVL(dt.doanh_thu, 0) AS doanh_thu
-    FROM lich_thang l LEFT JOIN dt_thang dt ON dt.thang = l.thang
-)
-SELECT TO_CHAR(thang, 'YYYY-MM') AS thang,
-       doanh_thu,
-       SUM(doanh_thu) OVER (
-         ORDER BY thang 
-         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-       ) AS luy_ke,
-       LAG(doanh_thu) OVER (ORDER BY thang) AS thang_truoc,
-       ROUND(
-         100 * (doanh_thu - LAG(doanh_thu) OVER (ORDER BY thang)) 
-             / NULLIF(LAG(doanh_thu) OVER (ORDER BY thang), 0),
-         1
-       ) AS tang_truong_pct
-  FROM thang_day_du
- ORDER BY thang;`
+    sql: `with lich_thang as (
+          select add_months(trunc(${ORACLE_NOW}, 'MM'), level-12) thang
+          from dual connect by level<=12
+        ), dt_thang as (
+          select trunc(s.gio_bat_dau, 'MM') as thang, sum(v.gia_ve) as doanh_thu
+          from ve v join suat_chieu s on s.ma_suat = v.ma_suat
+          where v.trang_thai in ('DA_THANH_TOAN','DA_SU_DUNG')
+            and s.gio_bat_dau>=add_months(trunc(${ORACLE_NOW}, 'MM'), -11)
+            and s.gio_bat_dau<add_months(trunc(${ORACLE_NOW}, 'MM'), 1)
+          group by trunc(s.gio_bat_dau, 'MM')
+        ), du_lieu as (
+          select l.thang,nvl(d.doanh_thu,0) doanh_thu from lich_thang l
+          left join dt_thang d on d.thang=l.thang
+        ), xu_huong as (
+          select thang,doanh_thu,
+            sum(doanh_thu) over (order by thang rows unbounded preceding) luy_ke,
+            lag(doanh_thu) over (order by thang) thang_truoc from du_lieu
+        )
+        select to_char(thang,'YYYY-MM') thang,doanh_thu,luy_ke,thang_truoc,
+          round(100*(doanh_thu-thang_truoc)/nullif(thang_truoc,0),2) tang_truong_pct
+        from xu_huong order by thang`
   },
   ngay: {
     title: "Doanh thu theo ngày trong 30 ngày gần nhất",
     description: "Recursive CTE tạo lịch đủ 30 ngày. LEFT JOIN giữ lại cả ngày không bán vé.",
-    sql: `WITH lich_ngay (ngay, ngay_cuoi) AS (
-  SELECT TRUNC(SYSDATE)-29, TRUNC(SYSDATE) FROM dual
-  UNION ALL
-  SELECT ngay+1, ngay_cuoi FROM lich_ngay WHERE ngay < ngay_cuoi
-), dt_ngay AS (
-  SELECT TRUNC(s.gio_bat_dau) AS ngay, SUM(v.gia_ve) AS doanh_thu
-  FROM suat_chieu s JOIN ve v ON v.ma_suat = s.ma_suat
-  WHERE s.gio_bat_dau >= TRUNC(SYSDATE)-29
-    AND s.gio_bat_dau < TRUNC(SYSDATE)+1
-    AND v.trang_thai IN ('DA_THANH_TOAN','DA_SU_DUNG')
-  GROUP BY TRUNC(s.gio_bat_dau)
-)
-SELECT l.ngay, NVL(d.doanh_thu,0) AS doanh_thu
-FROM lich_ngay l LEFT JOIN dt_ngay d ON d.ngay = l.ngay
-ORDER BY l.ngay;`
+    sql: `with lich_ngay(ngay,ngay_cuoi) as (
+          select trunc(${ORACLE_NOW})-29,trunc(${ORACLE_NOW}) from dual
+          union all
+          select ngay+1,ngay_cuoi from lich_ngay where ngay<ngay_cuoi
+        ), dt_ngay as (
+          select trunc(s.gio_bat_dau) ngay,sum(v.gia_ve) doanh_thu
+          from suat_chieu s join ve v on v.ma_suat=s.ma_suat
+          where s.gio_bat_dau>=trunc(${ORACLE_NOW})-29
+            and s.gio_bat_dau<trunc(${ORACLE_NOW})+1
+            and v.trang_thai in ('DA_THANH_TOAN','DA_SU_DUNG')
+          group by trunc(s.gio_bat_dau)
+        )
+        select to_char(l.ngay,'YYYY-MM-DD') ngay,nvl(d.doanh_thu,0) doanh_thu
+        from lich_ngay l left join dt_ngay d on d.ngay=l.ngay order by l.ngay`
   },
   lapDayPhong: {
     title: "3. Tỷ Lệ Lấp Đầy Phòng Chiếu & Xếp Hạng Từng Rạp (RANK OVER PARTITION BY)",
     description: "Sử dụng 2 CTE tính tổng số ghế phòng và số vé đã bán, sau đó tính tỷ lệ lấp đầy % và dùng RANK() OVER (PARTITION BY r.ma_rap ORDER BY ty_le_lap_day DESC) để xếp hạng hiệu quả phòng chiếu nội bộ từng cụm rạp.",
-    sql: `WITH so_ghe AS (
-  SELECT ma_phong, COUNT(*) AS tong_ghe 
-    FROM ghe 
-   GROUP BY ma_phong
-), 
-ve_ban AS (
-  SELECT ma_suat, COUNT(*) AS so_ve 
-    FROM ve
-   WHERE trang_thai IN ('DA_THANH_TOAN', 'DA_SU_DUNG') 
-   GROUP BY ma_suat
-)
-SELECT r.ten_rap,
-       ph.ten_phong,
-       p.ten_phim,
-       TO_CHAR(s.gio_bat_dau, 'YYYY-MM-DD HH24:MI') AS gio_chieu,
-       NVL(vb.so_ve, 0) AS so_ve,
-       sg.tong_ghe,
-       ROUND(100 * NVL(vb.so_ve, 0) / sg.tong_ghe, 1) AS ty_le_lap_day,
-       RANK() OVER (
-         PARTITION BY r.ma_rap 
-         ORDER BY NVL(vb.so_ve, 0) / sg.tong_ghe DESC
-       ) AS hang_trong_rap
-  FROM suat_chieu s
-  JOIN phim p         ON p.ma_phim = s.ma_phim
-  JOIN phong_chieu ph ON ph.ma_phong = s.ma_phong
-  JOIN rap r          ON r.ma_rap = ph.ma_rap
-  JOIN so_ghe sg      ON sg.ma_phong = s.ma_phong
-  LEFT JOIN ve_ban vb ON vb.ma_suat = s.ma_suat
- WHERE s.gio_bat_dau >= TRUNC(SYSDATE)
-   AND s.gio_bat_dau < TRUNC(SYSDATE) + 1
- ORDER BY r.ten_rap, hang_trong_rap;`
+    sql: `with so_ghe as (
+          select ma_phong, count(*) as tong_ghe from ghe group by ma_phong
+        ), ve_ban as (
+          select ma_suat, count(*) as so_ve from ve
+          where trang_thai in ('DA_THANH_TOAN','DA_SU_DUNG') group by ma_suat
+        )
+        select s.ma_suat,r.ma_rap,r.ten_rap, ph.ten_phong, p.ten_phim,
+          to_char(s.gio_bat_dau, 'YYYY-MM-DD HH24:MI') as gio_chieu,
+          nvl(vb.so_ve, 0) as so_ve, sg.tong_ghe,
+          round(100 * nvl(vb.so_ve, 0) / sg.tong_ghe, 1) as ty_le_lap_day,
+          rank() over (partition by r.ma_rap order by nvl(vb.so_ve, 0) / sg.tong_ghe desc) as hang_trong_rap
+        from suat_chieu s
+        join phim p on p.ma_phim = s.ma_phim
+        join phong_chieu ph on ph.ma_phong = s.ma_phong
+        join rap r on r.ma_rap = ph.ma_rap
+        join so_ghe sg on sg.ma_phong = s.ma_phong
+        left join ve_ban vb on vb.ma_suat = s.ma_suat
+        where s.gio_bat_dau>=trunc(${ORACLE_NOW}) and s.gio_bat_dau<trunc(${ORACLE_NOW})+1
+          and s.trang_thai<>'HUY'
+        order by r.ten_rap, hang_trong_rap,s.gio_bat_dau`
   }
 };
 
@@ -547,7 +517,7 @@ export function AnalyticsDashboard({ session }) {
 
             <div className="sql-modal-footer">
               <p className="muted text-sm">
-                💡 <em>Ghi chú chấm điểm:</em> Các câu lệnh trên khai thác trực tiếp tính năng Common Table Expression (CTE) và Window Functions của Oracle 23ai, giúp tránh lặp lại quét bảng (Full Table Scan) và tối ưu hóa chi phí thực thi (Buffer Gets).
+                <em>Ghi chú kỹ thuật:</em> Các câu lệnh dùng Common Table Expression (CTE) và Window Functions để tổng hợp, xếp hạng và tính lũy kế. CTE không tự bảo đảm tránh Full Table Scan; hiệu năng cần được kiểm chứng bằng Execution Plan và Buffer Gets thực đo trong Lab.
               </p>
             </div>
           </div>

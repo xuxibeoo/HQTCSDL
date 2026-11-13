@@ -1,0 +1,84 @@
+{
+  "verifiedAt": "2026-11-13T13:16:07.512Z",
+  "sourceBaseline": "01a581c45afe86d27e856a8a47d1ecad530ac422",
+  "cleanTrackedArchive": true,
+  "sourceRuntimeChangesSyncedBeforeFinalBuild": true,
+  "project": "huflit-cinema-fresh-20261113",
+  "ports": {
+    "oracle": 1533,
+    "web": 8093
+  },
+  "isolatedVolume": "huflit-cinema-fresh-20261113_oracle-data",
+  "existingProjectUntouched": true,
+  "firstBoot": {
+    "freshVolume": true,
+    "imagesAlreadyCached": true,
+    "seconds": 41,
+    "launcher": "Windows PowerShell 5.1 from a path containing spaces",
+    "passed": true
+  },
+  "schemaVerification": {
+    "exactTables": 16,
+    "packageMembers": 8,
+    "triggers": 3,
+    "views": 2,
+    "schedulerJob": true,
+    "seats": 1500,
+    "passed": true
+  },
+  "beforeRestart": {
+    "oracle": "23.9.0.25.7",
+    "counts": {
+      "rap": 3,
+      "phong_chieu": 15,
+      "ghe": 1500,
+      "phim": 20,
+      "khach_hang": 20,
+      "suat_chieu": 359,
+      "don_dat_ve": 40,
+      "ve": 280,
+      "thanh_toan": 40
+    },
+    "tables": 16,
+    "passed": true
+  },
+  "afterRestart": {
+    "oracle": "23.9.0.25.7",
+    "counts": {
+      "rap": 3,
+      "phong_chieu": 15,
+      "ghe": 1500,
+      "phim": 20,
+      "khach_hang": 20,
+      "suat_chieu": 359,
+      "don_dat_ve": 40,
+      "ve": 280,
+      "thanh_toan": 40
+    },
+    "tables": 16,
+    "passed": true
+  },
+  "stopStartPreservedCounts": true,
+  "finalPackageBodyOnlyRecompiled": true,
+  "finalPackageSourceSha256": "16F5D853AE4860B2D45C4167E98BC0100B4BD6D28DA4C8B81CBE7FBB8139F632",
+  "dotenvInlineCommentRegression": {
+    "composeAccepts": true,
+    "oldLauncherExit": 1,
+    "fixedLauncherExit": 0
+  },
+  "optionalPerformance": {
+    "defaultBootDoesNotLoad": true,
+    "freshCheck": "PERF_LOADED=0;ORDERS=40;TICKETS=280",
+    "existingCheck": "PERF_LOADED=1;ORDERS=300057;TICKETS=400305",
+    "confirmLoadOnExistingMarkerSkipped": true,
+    "fresh400kLoadNotRun": true
+  },
+  "cleanup": {
+    "containers": "stopped after successful isolated Oracle, API and Edge verification on 2026-11-14",
+    "volume": "retained; no volume deleted"
+  },
+  "caveats": [
+    "Cold registry/image download was not measured.",
+    "Final package day-boundary fix was compiled BODY-only into the isolated fresh volume after the initial bootstrap; schema/order/ticket data was not reset."
+  ]
+}
