@@ -1,0 +1,40 @@
+{
+  "backup": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755",
+  "files": [
+    {
+      "sha256": "08940F597E125F7DCEC132C07876C4E12251BEE7CEBD39BA39878FAF0AB80ECE",
+      "file": "database/01_schema.sql",
+      "bytes": 7739
+    },
+    {
+      "sha256": "87DA0077FD5B4CD815D0C4FE0AC3143132EEDD78AE6627300720682679F4452E",
+      "file": "database/02_indexes.sql",
+      "bytes": 617
+    },
+    {
+      "sha256": "F538A33A77F4BDB315F2669304D6695C49FD420DEA3BE071C64EC856FBF3FAA0",
+      "file": "database/03_triggers.sql",
+      "bytes": 2440
+    },
+    {
+      "sha256": "4CCFED2DEE54ADCDAEAD1C21DCA8680DB04E926A8AC3F8EC0B6C9CE485DCBD8D",
+      "file": "database/04_plsql_package.sql",
+      "bytes": 10472
+    },
+    {
+      "sha256": "59DAA54E511F2BD8F6DD0A7D41010CDD450F9793BF030FECC8B7E7FE0222E18D",
+      "file": "database/05_seed_small.sql",
+      "bytes": 6680
+    },
+    {
+      "sha256": "83980F42FF1EC9F89EB6CF65DEE7741CD7C898668A4ADA95F8A3D3DF569F2E33",
+      "file": "database/06_seed_perf.sql",
+      "bytes": 2622
+    },
+    {
+      "sha256": "1F3E9B5CF0B154AFE54B8B14C222AB87E1C35E40C00ADE31737C14E25F5AB67E",
+      "file": "database/07_views.sql",
+      "bytes": 1723
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "backup": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755",
+  "moved": [
+    {
+      "source": "frontend/node_modules",
+      "destination": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755\\generated\\frontend\\node_modules",
+      "inProject": false,
+      "files": 5540,
+      "bytes": 97457289
+    },
+    {
+      "source": "frontend/dist",
+      "destination": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755\\generated\\frontend\\dist",
+      "inProject": false,
+      "files": 63,
+      "bytes": 2185437
+    },
+    {
+      "source": "backend/dist",
+      "destination": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755\\generated\\backend\\dist",
+      "inProject": false,
+      "files": 9,
+      "bytes": 1291300
+    },
+    {
+      "source": "backend/__pycache__",
+      "destination": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755\\generated\\backend\\__pycache__",
+      "inProject": false,
+      "files": 5,
+      "bytes": 134133
+    },
+    {
+      "source": "docs/qa-student/inspect_schedule.py",
+      "destination": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755\\generated\\docs\\qa-student\\inspect_schedule.py",
+      "inProject": false,
+      "files": 1,
+      "bytes": 1240
+    },
+    {
+      "source": "docs/qa-student/__pycache__",
+      "destination": "C:\\Users\\ASUS TUF\\Downloads\\HQTCSDL_sao_luu_don_dep_20261111_185755\\generated\\docs\\qa-student\\__pycache__",
+      "inProject": false,
+      "files": 1,
+      "bytes": 11829
+    }
+  ],
+  "totalBytes": 101081228
+}

@@ -1,0 +1,11 @@
+.env
+.git
+**/node_modules
+**/__pycache__
+frontend/dist
+database
+sql
+docs
+tools
+.runtime
+backend/dist

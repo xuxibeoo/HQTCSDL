@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "steps": 5,
+  "scenarios": 3,
+  "scrollToLastStep": true,
+  "desktopCatalogColumns": 4,
+  "mobileCatalogColumns": 2,
+  "mobileWidth": 390,
+  "escapeAndReopen": true,
+  "qrFallbackChecked": true,
+  "autoExecutedTests": 0,
+  "pageErrors": []
+}

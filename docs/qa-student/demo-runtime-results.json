@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "before": {
+    "tables": 16,
+    "rooms": 15,
+    "seats": 1500,
+    "orders": 300053,
+    "tickets": 400299
+  },
+  "after": {
+    "tables": 16,
+    "rooms": 15,
+    "seats": 1500,
+    "orders": 300053,
+    "tickets": 400299
+  },
+  "statuses": {
+    "first_it_post": 200,
+    "second_it_post": 200,
+    "public_read": 200,
+    "anonymous_post": 401,
+    "customer_post": 403
+  },
+  "first_created": 0,
+  "second_created": 0,
+  "current": {
+    "ok": false,
+    "demo": true,
+    "timezone": "Asia/Ho_Chi_Minh",
+    "created": 0,
+    "scenarios": {
+      "quet_qr": null,
+      "tu_choi_hoan": {
+        "ma_suat": 34607,
+        "ma_phim": 7,
+        "ma_rap": 1,
+        "ma_phong": 4,
+        "ten_phim": "Mây Trôi",
+        "ten_phong": "Phòng 4",
+        "gio_bat_dau": "2026-11-11T20:52:01",
+        "gio_ket_thuc": "2026-11-11T22:27:01",
+        "dinh_dang": "3D",
+        "gia_co_ban": 105000,
+        "title": "Từ chối hoàn: còn dưới 2 giờ"
+      },
+      "duoc_hoan": {
+        "ma_suat": 34576,
+        "ma_phim": 7,
+        "ma_rap": 1,
+        "ma_phong": 1,
+        "ten_phim": "Mây Trôi",
+        "ten_phong": "Phòng 1",
+        "gio_bat_dau": "2026-11-11T23:57:40",
+        "gio_ket_thuc": "2026-11-12T01:32:40",
+        "dinh_dang": "2D",
+        "gia_co_ban": 80000,
+        "title": "Được hoàn: còn trên 2 giờ"
+      }
+    },
+    "missing": [
+      "quet_qr"
+    ],
+    "message": "Chưa đủ suất demo: phòng rạp 1 đang bận hoặc thiếu ghế trống. Mở vai trò Lập lịch để chọn giờ/phòng phù hợp, hoặc thử chuẩn bị lại sau. Hệ thống không dời lịch, xóa đơn hay đặt lại dữ liệu."
+  },
+  "note": "Missing scenarios remain explicit when all existing rooms conflict; no schedule or inventory was reset."
+}

@@ -1,0 +1,42 @@
+name: huflit-cinema-v2
+services:
+  oracle:
+    image: container-registry.oracle.com/database/free:23.9.0.0
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      ORACLE_PWD: ${ORACLE_ADMIN_PASSWORD:-CinemaLocalSys23_Dev}
+      CINEMA_DB_PASSWORD: ${CINEMA_DB_PASSWORD:-CinemaLocalApp23_Dev}
+    ports:
+      - "127.0.0.1:${ORACLE_PORT:-1521}:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./database:/cinema-db:ro
+      - ./sql:/sql:ro
+      - ./database/bootstrap/startup.sh:/opt/oracle/scripts/startup/01_cinema.sh:ro
+    healthcheck:
+      test: ["CMD", "bash", "/cinema-db/bootstrap/health.sh"]
+      interval: 15s
+      timeout: 12s
+      retries: 45
+      start_period: 60s
+  web:
+    build: .
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      DB_DSN: oracle:1521/FREEPDB1
+      CINEMA_DB_PASSWORD: ${CINEMA_DB_PASSWORD:-CinemaLocalApp23_Dev}
+      CINEMA_DEMO: ${CINEMA_DEMO:-1}
+      CINEMA_JWT_SECRET: ${CINEMA_JWT_SECRET:-}
+      CINEMA_CORS_ORIGINS: ${CINEMA_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080}
+    depends_on:
+      oracle:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8080/api/health', timeout=5).close()"]
+      interval: 10s
+      timeout: 8s
+      retries: 10
+volumes:
+  oracle-data:

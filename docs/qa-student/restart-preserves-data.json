@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "launcher": "KHOI_DONG.bat / tools/start-demo.ps1",
+  "testedWindowsPowerShell": "5.1",
+  "stoppedAndRestarted": true,
+  "hostNodeModulesPresent": false,
+  "before": {
+    "tables": 16,
+    "orders": 300054,
+    "tickets": 400301,
+    "seats": 1500,
+    "rooms": 15
+  },
+  "after": {
+    "tables": 16,
+    "orders": 300054,
+    "tickets": 400301,
+    "seats": 1500,
+    "rooms": 15
+  },
+  "note": "No schema reset, table deletion, or volume removal; source rebuilt in Docker after generated host files were archived."
+}

@@ -1,0 +1,30 @@
+{
+  "executedOn": "2026-11-12",
+  "project": "HQTCSDL / Galaxy HUFLIT",
+  "baseUrl": "http://127.0.0.1:8080",
+  "oracle": "23.9.0.25.7",
+  "schema": "CINEMA",
+  "launcher": {
+    "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/start-demo.ps1 -NoBrowser",
+    "exitCode": 0,
+    "startedDockerDesktopWhenStopped": true,
+    "startupSeconds": 45
+  },
+  "validations": [
+    {"command": "tools/verify-schema.py via container Python", "exitCode": 0, "summary": "Exact 16 tables, 8 package members, 3 triggers, 2 views, 1 scheduler job, indexes and 1500 seats verified."},
+    {"command": "powershell.exe -File tools/verify.ps1", "exitCode": 0, "passedCases": ["TC-01", "TC-02", "TC-03", "TC-04", "TC-05", "TC-06", "TC-07", "TC-08", "TC-09"]},
+    {"command": "powershell.exe -File tools/verify-contract.ps1", "exitCode": 0, "summary": "Seat quote, hold, conflict, payment, refund, duplicate payment, expiration, release, reports, trigger, audit and plans verified."},
+    {"command": "node tools/verify-student-demo.cjs", "browser": "Microsoft Edge", "exitCode": 0, "summary": "Five steps, three scenarios, scroll, Escape/reopen, TC-09 fallback and zero automatically executed tests verified."},
+    {"command": "node tools/verify-ui-v2.cjs", "browser": "Microsoft Edge", "exitCode": 0, "summary": "Five modules, three sessions, 100-seat map, combo/voucher, hold/payment/QR/refund, early QR rejection, reports, trigger and mobile verified."}
+  ],
+  "benchmark": {
+    "A": {"fullBufferGets": 4037, "indexBufferGets": 4, "resultMatch": true},
+    "B": {"fullBufferGets": 2127, "indexBufferGets": 13, "resultMatch": true}
+  },
+  "catalogLayout": {"desktopColumns": 4, "mobileColumns": 2, "mobileWidth": 390, "horizontalOverflow": false},
+  "notes": [
+    "Summary transcribed from actual verification command results, not a replacement for rerunning tests before defense.",
+    "Tests may create academic demo transactions. No real payment or production data was used.",
+    "Restart data-preservation snapshot and demo preparation unit/permission tests are separately recorded from 2026-11-11."
+  ]
+}
